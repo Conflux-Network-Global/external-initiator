@@ -19,6 +19,7 @@ var blockchains = []string{
 	XTZ,
 	Substrate,
 	ONT,
+	CFX,
 }
 
 type Params struct {
@@ -36,6 +37,8 @@ func CreateJsonManager(t subscriber.Type, sub store.Subscription) (subscriber.Js
 		return createEthManager(t, sub), nil
 	case Substrate:
 		return createSubstrateManager(t, sub)
+	case CFX:
+		return createCfxManager(t, sub), nil
 	}
 
 	return nil, errors.New("unknown blockchain type for JSON manager")
@@ -59,6 +62,8 @@ func GetConnectionType(endpoint store.Endpoint) (subscriber.Type, error) {
 	// Add blockchain implementations that encapsulate entire connection here
 	case XTZ, ONT:
 		return subscriber.Client, nil
+	case CFX:
+		return subscriber.RPC, nil
 	default:
 		u, err := url.Parse(endpoint.Url)
 		if err != nil {
@@ -102,6 +107,10 @@ func GetValidations(t string, params Params) []int {
 		return []int{
 			len(params.Addresses),
 		}
+	case CFX:
+		return []int{
+			len(params.Addresses) + len(params.Topics),
+		}
 	}
 
 	return nil
@@ -125,6 +134,11 @@ func CreateSubscription(sub *store.Subscription, params Params) {
 	case ONT:
 		sub.Ontology = store.OntSubscription{
 			Addresses: params.Addresses,
+		}
+	case CFX:
+		sub.Ethereum = store.EthSubscription{
+			Addresses: params.Addresses,
+			Topics:    params.Topics,
 		}
 	}
 }

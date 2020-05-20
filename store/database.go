@@ -112,6 +112,10 @@ func (client Client) prepareSubscription(rawSub *Subscription) (*Subscription, e
 		if err := client.db.Model(&sub).Related(&sub.Ontology).Error; err != nil {
 			return nil, err
 		}
+	case "conflux":
+		if err := client.db.Model(&sub).Related(&sub.Conflux).Error; err != nil {
+			return nil, err
+		}
 	}
 
 	return &sub, nil
@@ -247,6 +251,7 @@ type Subscription struct {
 	Tezos        TezosSubscription
 	Substrate    SubstrateSubscription
 	Ontology     OntSubscription
+	Conflux			 CfxSubscription
 }
 
 type EthSubscription struct {
@@ -272,4 +277,11 @@ type OntSubscription struct {
 	gorm.Model
 	SubscriptionId uint
 	Addresses      SQLStringArray
+}
+
+type CfxSubscription struct {
+	gorm.Model
+	SubscriptionId uint
+	Addresses      SQLStringArray
+	Topics         SQLStringArray
 }
