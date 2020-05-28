@@ -136,7 +136,7 @@ func CreateSubscription(sub *store.Subscription, params Params) {
 			Addresses: params.Addresses,
 		}
 	case CFX:
-		sub.Ethereum = store.EthSubscription{
+		sub.Conflux = store.CfxSubscription{
 			Addresses: params.Addresses,
 			Topics:    params.Topics,
 		}
